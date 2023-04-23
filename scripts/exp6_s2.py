@@ -17,20 +17,20 @@ results_list = list()
 denoise_cdf_list = list()
 for size in narr_list:
     for tm in timing_methods:
-        tm_file = 'TL_CALC_W-C' + str(size) + '-' + tm + '.csv'
+        tm_file = './exp6_data/TL_CALC_W-C' + str(size) + '-' + tm + '.csv'
         df = pd.read_csv(tm_file, header=None)
-        med = df[1].min()
         if tm == 'STiming':
             tick = freq
         else:
             tick = 1
-        nvk = med / tick * 2.5 / 2
-        tv_file = 'TL_CALC_W-C' + str(size) + '-'  + tm + '-sample.csv'
+        tv_file = './exp6_data/TL_CALC_W-C' + str(size) + '-'  + tm + '-sample.csv'
+        df = pd.read_csv(tv_file, header=None)
+        nvk = df[1][0]
         test_mes = filt.MetResult(met_file=tm_file, col_id=1, freq_ghz=2.5, tick_ghz=tick)
         lost_wd_min = 0x7fffffff - 1
         denoise_bins_candidate = list()
         for ps in ps_candidate:
-            denoise_bins, residual, lost_wd = test_mes.filt(tnoise_file=tv_file, col=1, vkern_count=nvk, roundto=5, met_pl=0.001, met_ps=0.001, tf_pl=0.001, tf_ps=ps, mix=True)
+            denoise_bins, residual, lost_wd = test_mes.filt(tnoise_file=tv_file, col=2, vkern_count=nvk, roundto=5, met_pl=0.001, met_ps=0.001, tf_pl=0.001, tf_ps=ps, mix=True)
             denoise_bins_candidate.append((ps, denoise_bins, residual, lost_wd))
         # Picking denoise cdf with the lowest restore error
         denoise_result = min(denoise_bins_candidate, key=lambda x: x[3])

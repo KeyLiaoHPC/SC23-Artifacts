@@ -9,7 +9,7 @@ import filt
 
 freq=2.49414
 
-base_time_list = [i for i in np.arange(0.1, 1, 0.1)] + [i for i in np.arange(1, 10, 1)] + [i for i in np.arange(10, 101, 10)]# us
+base_time_list = [i for i in np.arange(0.1, 0.99, 0.1)] + [i for i in np.arange(1, 10, 1)] + [i for i in np.arange(10, 101, 10)]# us
 timing_methods = ['PAPI', 'STiming']
 distro_list = ['norm-s0.015', 'pareto-b26']
 
@@ -143,7 +143,7 @@ for distro in distro_list:
         else:
             base_time = np.round(base_time, 0)
         tm = 'PAPI'
-        tm_file = './exp5_data/sc2-' + distro + '-' + str(base_time) + 'us-' + tm + '.csv'
+        tm_file = './exp5_data/exp5-' + distro + '-' + str(base_time) + 'us-' + tm + '.csv'
         cdf0 = filt.raw_to_cdf(pd.read_csv(tm_file, header=None)[1].to_numpy() * 2 / 2.5, 1000)
         met_cdf = filt.raw_to_cdf(pareto_results_list[i * 2].met_arr, 1000)
         # denoise_cdf = filt.bin_to_cdf(results_list[i*2].denoise_arr, 1000)

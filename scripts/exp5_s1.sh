@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash 
 
 cp ../vkern/vkern.c ./exp5.c
 cp ../vkern/vkern_sampling.c ./exp5_sampling.c
@@ -11,7 +11,9 @@ WALK=-DWALK_FILE
 date
 for i in 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1 2 3 4 5 6 7 8 9 10 20 30 40 50 60 70 80 90 100
 do
+    echo "====== Compiling, t_base = $i us ======"
     tbase=$(bc <<< "$i*1250")
+    tbase=$(printf '%.0f\n' $tbase)
     mpicc  -o exp5_pareto_t${i}_stiming.x \
         -DNTEST=10000 -DNPASS=1 -DTBASE=$tbase -DPARETO -DV1=26 -DHCUT=1.34 -DINIT -DFSIZE=$FSIZE \
         ./exp5.c -lgsl -lopenblas
@@ -55,8 +57,6 @@ do
         date
         NAME1=exp5-pareto-b26-${i}us
         NAME2=exp5-norm-s0.015-${i}us
-        
-        nsamp=$(bc <<< "$i*1250")
 
         date
         mpirun --mca mtl psm2 --mca btl vader,self --map-by core --bind-to core -np 40 ./exp5_pareto_t${i}_stiming.x
@@ -83,10 +83,10 @@ do
         mpirun --mca mtl psm2 --mca btl vader,self --map-by core --bind-to core -np 40 ./exp5_normal_t${i}_papi_sampling.x
         sleep 1
         
-        cat  stiming_time.csv   >> exp5_data/${NAME1}-STiming.csv
-        cat  stiming_time_sample.csv   >> exp5_data/${NAME1}-STiming-sample.csv
-        cat  papi_time.csv  >> exp5_data/${NAME1}-PAPI.csv
-        cat  papi_time_sample.csv  >> exp5_data/${NAME1}-PAPI-sample.csv
+        cat  stiming_time.csv   >> exp5_data/${NAME2}-STiming.csv
+        cat  stiming_time_sample.csv   >> exp5_data/${NAME2}-STiming-sample.csv
+        cat  papi_time.csv  >> exp5_data/${NAME2}-PAPI.csv
+        cat  papi_time_sample.csv  >> exp5_data/${NAME2}-PAPI-sample.csv
     done
 done
 rm stiming_time.csv
